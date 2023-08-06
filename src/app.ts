@@ -12,7 +12,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
   },
 });
 
@@ -35,7 +34,12 @@ app.get('/', (req, res) => res.send('Hello'));
 app.use(errorHandler);
 
 io.on('connection', (socket) => {
-  console.log(socket.id + ' BAGLANDI');
+  console.log(socket.id + ' CONNECTED');
+
+  socket.on('send-message', (message) => {
+    console.log(message);
+    //io.emit('receive-message', message);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
