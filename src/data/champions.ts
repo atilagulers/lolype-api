@@ -1,9 +1,9 @@
-import Champion from './Champion';
+import Champion from '../models/Champion';
 
 const champions: Champion[] = [
   {
     name: 'Rammus',
-    type: 'Tank',
+    role: 'Tank',
     health: 800,
     sourceType: 'Mana',
     source: 500,
@@ -14,7 +14,7 @@ const champions: Champion[] = [
   },
   {
     name: 'Zed',
-    type: 'Tank',
+    role: 'Assassin',
     health: 450,
     sourceType: 'Energy',
     source: 200,

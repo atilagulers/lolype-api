@@ -4,7 +4,8 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-
+import BadRequest from './errors/BadRequest.js';
+console.log(BadRequest);
 const app = express();
 
 app.use(helmet());

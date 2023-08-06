@@ -1,11 +1,12 @@
-type sourceType = 'Mana' | 'Energy' | 'Rage' | 'None';
+type Role = 'Tank' | 'Assassin' | 'Figther';
+type SourceType = 'Mana' | 'Energy' | 'Rage' | 'None';
 
 export default class Champion {
   constructor(
     public name: string,
-    public type: 'Tank' | 'Assassin',
+    public role: Role,
     public health: number,
-    public sourceType: sourceType,
+    public sourceType: SourceType,
     public source: number,
     public attackDamage: number,
     public abilityPower: number,
