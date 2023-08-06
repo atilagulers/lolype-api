@@ -1,11 +1,20 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import http from 'http';
+import {Server} from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 
 app.use(helmet());
 app.use(cors());
@@ -25,7 +34,11 @@ app.get('/', (req, res) => res.send('Hello'));
 
 app.use(errorHandler);
 
+io.on('connection', (socket) => {
+  console.log(socket.id + ' BAGLANDI');
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
