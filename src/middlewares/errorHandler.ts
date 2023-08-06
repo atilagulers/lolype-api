@@ -1,6 +1,6 @@
-import {CustomError} from '../errors';
-import StatusCodes from '../helpers/HttpStatusCodes';
-import express, {Request, Response, NextFunction} from 'express';
+import {CustomError} from '../errors/index.js';
+import StatusCodes from '../helpers/HttpStatusCodes.js';
+import {Request, Response, NextFunction} from 'express';
 
 const errorHandler = (
   err: Error,
@@ -13,3 +13,5 @@ const errorHandler = (
 
   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({err});
 };
+
+export default errorHandler;

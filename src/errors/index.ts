@@ -1,4 +1,4 @@
-import CustomError from './CustomError';
-import BadRequest from './BadRequest';
+import CustomError from './CustomError.js';
+import BadRequest from './BadRequest.js';
 
 export {CustomError, BadRequest};

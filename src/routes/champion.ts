@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 import champions from '../data/champions.js';
-//import {BadRequest} from '../errors/BadRequest.js';
+import {BadRequest} from '../errors/index.js';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.get('/:champion', (req: Request, res: Response) => {
   );
 
   if (!matchedChampion) {
-    //throw new BadRequest('CHAMPION NOT FOUND');
+    throw new BadRequest('CHAMPION NOT FOUND');
   }
 
   res.json(matchedChampion);
