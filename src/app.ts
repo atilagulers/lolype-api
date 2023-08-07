@@ -36,9 +36,22 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
   console.log(socket.id + ' CONNECTED');
 
-  socket.on('send-message', (message) => {
+  socket.on('send-message', (message, room) => {
     console.log(message);
-    //io.emit('receive-message', message);
+    // everyone
+    //io.emit('receive-message', 'Message received');
+
+    // everyone except sender
+    console.log('room ' + room);
+    //if (!room) {
+    //  socket.broadcast.emit('receive-message', message);
+    //} else {
+    //  socket.to(room).emit('receive-message', message);
+    //}
+
+    socket.on('join-room', (room) => {
+      socket.join(room);
+    });
   });
 });
 
