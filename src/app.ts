@@ -6,6 +6,7 @@ import {Server} from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import {nanoid} from 'nanoid';
 
 const app = express();
 const server = http.createServer(app);
