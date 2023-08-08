@@ -34,13 +34,25 @@ app.get('/', (req, res) => res.send('Hello'));
 
 app.use(errorHandler);
 
+const activeRooms: string[] = [];
+
 io.on('connection', (socket) => {
   console.log(socket.id + ' CONNECTED');
 
   socket.on('create-room', () => {
     const roomId = nanoid(6);
     socket.join(roomId);
+    activeRooms.push(roomId);
     io.to(roomId).emit('room-created', roomId);
+  });
+
+  socket.on('join-room', (roomId) => {
+    if (activeRooms.includes(roomId)) {
+      socket.join(roomId);
+      io.to(roomId).emit('room-joined', roomId);
+    } else {
+      socket.emit('room-not-found', roomId);
+    }
   });
 
   socket.on('send-message', (message, room) => {
