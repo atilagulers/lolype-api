@@ -46,12 +46,13 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('room-created', roomId);
   });
 
-  socket.on('join-room', (roomId) => {
-    if (activeRooms.includes(roomId)) {
-      socket.join(roomId);
-      io.to(roomId).emit('joined-room', roomId);
+  socket.on('join-room', ({roomID, name}) => {
+    if (activeRooms.includes(roomID)) {
+      socket.join(roomID);
+
+      io.to(roomID).emit('joined-room', {roomID, name});
     } else {
-      socket.emit('room-not-found', roomId);
+      socket.emit('room-not-found', roomID);
     }
   });
 
