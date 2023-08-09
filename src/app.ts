@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
   socket.on('join-room', (roomId) => {
     if (activeRooms.includes(roomId)) {
       socket.join(roomId);
-      io.to(roomId).emit('room-joined', roomId);
+      io.to(roomId).emit('joined-room', roomId);
     } else {
       socket.emit('room-not-found', roomId);
     }
