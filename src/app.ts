@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
   socket.on('create-room', () => {
     const roomId = nanoid(6);
     socket.join(roomId);
+
     activeRooms.push(roomId);
     io.to(roomId).emit('room-created', roomId);
   });
