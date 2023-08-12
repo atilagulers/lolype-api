@@ -35,11 +35,13 @@ app.get('/', (req, res) => res.send('Hello'));
 app.use(errorHandler);
 
 import Champion from './models/Champion.js';
+
 interface Player {
   socketId: string | undefined;
+  isHost: boolean;
+  isReady: boolean;
   name: string;
-  //champion: Champion;
-  //hp: number;
+  champion: Champion | null;
 }
 
 enum GameState {
@@ -100,9 +102,16 @@ io.on('connection', (socket) => {
     }
   );
 
-  //socket.on('check-player-count', (room) => {
-  //  const foundRoom = activeRooms.find((room) => room.id === roomID);
-  //});
+  socket.on('update-room', (updatedRoom) => {
+    const roomIndex = activeRooms.findIndex(
+      (room) => room.id === updatedRoom.id
+    );
+    if (roomIndex !== -1) {
+      activeRooms[roomIndex] = updatedRoom;
+
+      io.to(updatedRoom.id).emit('room-updated', updatedRoom);
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3000;
