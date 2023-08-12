@@ -1,7 +1,7 @@
 type Role = 'Tank' | 'Assassin' | 'Figther';
 type SourceType = 'Mana' | 'Energy' | 'Rage' | 'None';
 
-export default class Champion {
+export default abstract class Champion {
   constructor(
     public name: string,
     public role: Role,

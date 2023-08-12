@@ -34,15 +34,26 @@ app.get('/', (req, res) => res.send('Hello'));
 
 app.use(errorHandler);
 
+import Champion from './models/Champion.js';
 interface Player {
+  socketId: string | undefined;
   name: string;
-  champion: string;
+  //champion: Champion;
+  //hp: number;
+}
+
+enum GameState {
+  Waiting = 'waiting',
+  ChampionSelection = 'champion_selection',
+  RoundStart = 'round_start',
+  RoundEnd = 'round_end',
+  Finished = 'finished',
 }
 
 interface Room {
   id: string;
-  hostPlayer: Player | null;
-  otherPlayer: Player | null;
+  players: Player[];
+  gameState: GameState;
 }
 
 const activeRooms: Room[] = [];
@@ -50,57 +61,48 @@ const activeRooms: Room[] = [];
 io.on('connection', (socket) => {
   console.log(socket.id + ' CONNECTED');
 
-  socket.on('create-room', ({name, champion}: Player) => {
+  socket.on('create-room', (player: Player) => {
     const roomID = nanoid(6);
     socket.join(roomID);
 
-    const roomData: Room = {
+    const newRoom: Room = {
       id: roomID,
-      hostPlayer: null,
-      otherPlayer: null,
+      players: [],
+      gameState: GameState.Waiting,
     };
 
-    activeRooms.push(roomData);
-    io.to(roomID).emit('room-created', roomID);
+    newRoom.players.push(player);
+
+    activeRooms.push(newRoom);
+    io.to(roomID).emit('room-created', newRoom);
   });
 
   socket.on(
     'join-room',
-    ({roomID, playerData}: {roomID: string; playerData: Player}) => {
+    ({roomID, player}: {roomID: string; player: Player}) => {
       const foundRoom = activeRooms.find((room) => room.id === roomID);
 
       if (foundRoom) {
         socket.join(roomID);
 
-        if (!foundRoom.hostPlayer) {
-          foundRoom.hostPlayer = playerData;
-        } else if (!foundRoom.otherPlayer) {
-          foundRoom.otherPlayer = playerData;
-        } else {
+        if (foundRoom.players.length >= 2) {
           socket.emit('room-full');
           return;
         }
 
+        foundRoom.players.push(player);
+
         io.to(roomID).emit('joined-room', foundRoom);
+        io.to(roomID).emit('room-updated', foundRoom);
       } else {
         socket.emit('room-not-found', roomID);
       }
     }
   );
 
-  socket.on('send-message', (message, room) => {
-    console.log(message);
-    // everyone
-    //io.emit('receive-message', 'Message received');
-
-    // everyone except sender
-
-    //if (!room) {
-    //  socket.broadcast.emit('receive-message', message);
-    //} else {
-    //  socket.to(room).emit('receive-message', message);
-    //}
-  });
+  //socket.on('check-player-count', (room) => {
+  //  const foundRoom = activeRooms.find((room) => room.id === roomID);
+  //});
 });
 
 const PORT = process.env.PORT || 3000;
