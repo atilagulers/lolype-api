@@ -56,6 +56,7 @@ interface Room {
   id: string;
   players: Player[];
   gameState: GameState;
+  countdown: number;
 }
 
 const activeRooms: Room[] = [];
@@ -71,6 +72,7 @@ io.on('connection', (socket) => {
       id: roomID,
       players: [],
       gameState: GameState.Waiting,
+      countdown: 10,
     };
 
     newRoom.players.push(player);
@@ -110,6 +112,29 @@ io.on('connection', (socket) => {
       activeRooms[roomIndex] = updatedRoom;
 
       io.to(updatedRoom.id).emit('room-updated', updatedRoom);
+    }
+  });
+
+  socket.on('start-countdown', (roomID) => {
+    const roomIndex = activeRooms.findIndex((room) => room.id === roomID);
+
+    if (
+      activeRooms[roomIndex].players.every((player: Player) => player.isReady)
+    ) {
+      activeRooms[roomIndex].countdown = 10;
+
+      const countdownDuration = 10;
+      let countdown = countdownDuration;
+
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        activeRooms[roomIndex].countdown = countdown;
+        socket.emit('room-updated', activeRooms[roomIndex]);
+        if (countdown < 0) {
+          clearInterval(countdownInterval);
+          console.log('Geri sayım tamamlandı!');
+        }
+      }, 1000);
     }
   });
 });
