@@ -129,12 +129,14 @@ io.on('connection', (socket) => {
       const countdownInterval = setInterval(() => {
         countdown--;
         activeRooms[roomIndex].countdown = countdown;
-        socket.emit('room-updated', activeRooms[roomIndex]);
-        if (countdown < 0) {
+
+        if (countdown <= 0) {
+          activeRooms[roomIndex].gameState = GameState.RoundStart;
           clearInterval(countdownInterval);
-          console.log('Geri sayım tamamlandı!');
         }
       }, 1000);
+
+      socket.emit('room-updated', activeRooms[roomIndex]);
     }
   });
 });
