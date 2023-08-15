@@ -115,6 +115,20 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('update-player', ({roomID, player}) => {
+    const roomIndex = activeRooms.findIndex((room) => room.id === roomID);
+    if (roomIndex !== -1) {
+      const updatedRoom = {...activeRooms[roomIndex]};
+      const playerIndex = updatedRoom.players.findIndex(
+        (p) => p.socketId === player.socketId
+      );
+      if (playerIndex !== -1) {
+        updatedRoom.players[playerIndex] = player;
+        io.to(roomID).emit('room-updated', updatedRoom);
+      }
+    }
+  });
+
   socket.on('start-countdown', (roomID) => {
     const roomIndex = activeRooms.findIndex((room) => room.id === roomID);
 
@@ -132,11 +146,11 @@ io.on('connection', (socket) => {
 
         if (countdown <= 0) {
           activeRooms[roomIndex].gameState = GameState.RoundStart;
+          socket.emit('room-updated', activeRooms[roomIndex]);
+
           clearInterval(countdownInterval);
         }
       }, 1000);
-
-      socket.emit('room-updated', activeRooms[roomIndex]);
     }
   });
 });
