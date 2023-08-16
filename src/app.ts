@@ -137,7 +137,7 @@ io.on('connection', (socket) => {
     ) {
       activeRooms[roomIndex].countdown = 10;
 
-      const countdownDuration = 10;
+      const countdownDuration = 30;
       let countdown = countdownDuration;
 
       const countdownInterval = setInterval(() => {
@@ -160,17 +160,3 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// socket.on('create-room', ({name, champion}: Player) => {
-//   const roomID = nanoid(6);
-//   socket.join(roomID);
-
-//   const hostPlayer: Player = {name, champion};
-//   const roomData: Room = {
-//     id: roomID,
-//     host: hostPlayer,
-//     participant: null,
-//   };
-
-//   activeRooms.push(roomData);
-//   io.to(roomID).emit('room-created', roomID);
-// });
